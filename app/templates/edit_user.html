@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Edit User</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f8;
+margin:40px;
+}
+
+.container{
+background:white;
+padding:25px;
+border-radius:8px;
+border:1px solid #ddd;
+width:400px;
+}
+
+input{
+padding:8px;
+width:100%;
+margin-bottom:10px;
+}
+
+button{
+background:#28a745;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:5px;
+cursor:pointer;
+}
+
+.back{
+display:inline-block;
+margin-top:10px;
+text-decoration:none;
+background:#007bff;
+color:white;
+padding:6px 10px;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Edit User</h2>
+
+<form method="POST">
+
+<label>Username</label>
+<input name="username" value="{{ user[1] }}">
+
+<label>Password</label>
+<input name="password" value="{{ user[2] }}">
+
+<button>Save</button>
+
+</form>
+
+<a href="/admin" class="back">Back</a>
+
+</div>
+
+</body>
+
+</html>

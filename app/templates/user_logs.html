@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>User Searches</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f8;
+margin:40px;
+}
+
+table{
+width:600px;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+.back{
+display:inline-block;
+margin-bottom:20px;
+background:#007bff;
+color:white;
+padding:6px 12px;
+text-decoration:none;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="/admin" class="back">Back</a>
+
+<h2>Search History: {{ username }}</h2>
+
+<table>
+
+<tr>
+<th>Query</th>
+<th>Date</th>
+</tr>
+
+{% for log in logs %}
+
+<tr>
+<td>{{ log[0] }}</td>
+<td>{{ log[1] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>
