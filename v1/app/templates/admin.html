@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Admin Panel</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f8;
+margin:40px;
+}
+
+.header{
+display:flex;
+align-items:center;
+margin-bottom:30px;
+}
+
+h2{
+margin:0;
+}
+
+.back{
+margin-left:auto;
+text-decoration:none;
+background:#007bff;
+color:white;
+padding:6px 12px;
+border-radius:5px;
+}
+
+.container{
+background:white;
+padding:25px;
+border-radius:8px;
+border:1px solid #ddd;
+width:900px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+button{
+background:#dc3545;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+.adduser{
+margin-top:20px;
+}
+
+input{
+padding:8px;
+margin-right:10px;
+}
+
+.create{
+background:#28a745;
+}
+
+.section{
+margin-top:40px;
+}
+
+.userlink{
+color:#007bff;
+font-weight:bold;
+text-decoration:none;
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>Admin Panel</h2>
+
+    <a href="/admin/softone-raw" target="_blank" class="back" style="background:#6366f1; margin-right: 10px;">SoftOne Live Data</a>
+    <a href="/admin/stock" target="_blank" class="back" style="background:#10b981; margin-right: 10px;">Stock List</a>
+    <a href="/" class="back">Back</a>
+
+</div>
+
+<div class="container">
+
+<h3>Create User</h3>
+
+<form method="POST" action="/admin/add" class="adduser">
+
+<input name="username" placeholder="username">
+
+<input name="password" placeholder="password">
+
+<button class="create">Create</button>
+
+</form>
+
+
+<div class="section">
+
+<h3>Users</h3>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Username</th>
+<th>Role</th>
+<th>Action</th>
+</tr>
+
+{% for user in users %}
+
+<tr>
+
+<td>{{ user[0] }}</td>
+<td>{{ user[1] }}</td>
+<td>{{ user[2] }}</td>
+
+<td>
+
+<a href="/admin/edit/{{ user[0] }}">
+<button style="background:#ffc107;color:black">Edit</button>
+</a>
+
+<a href="/admin/delete/{{ user[0] }}">
+<button>Delete</button>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<div class="section">
+
+<h3>🔥 Top Searches</h3>
+
+<table>
+<tr>
+<th>Query</th>
+<th>Total</th>
+</tr>
+
+{% for row in top_searches %}
+
+<tr>
+<td>{{ row[0] }}</td>
+<td>{{ row[1] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<canvas id="searchChart"></canvas>
+
+</div>
+
+
+<div class="section">
+
+<h3>👥 Searches per User</h3>
+
+<table>
+<tr>
+<th>User</th>
+<th>Total Searches</th>
+</tr>
+
+{% for row in user_stats %}
+
+<tr>
+<td>{{ row[0] }}</td>
+<td>{{ row[1] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<canvas id="userChart"></canvas>
+
+</div>
+
+
+<div class="section">
+
+<h3>📈 Searches per Day</h3>
+
+<table>
+<tr>
+<th>Date</th>
+<th>Total</th>
+</tr>
+
+{% for row in daily_stats %}
+
+<tr>
+<td>{{ row[0] }}</td>
+<td>{{ row[1] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<canvas id="dayChart"></canvas>
+
+</div>
+
+
+<div class="section">
+
+<h3>AI Search Activity</h3>
+
+<table>
+
+<tr>
+<th>User</th>
+<th>Query</th>
+<th>Time</th>
+</tr>
+
+{% for log in logs %}
+
+<tr>
+
+<td>
+<a class="userlink" href="/admin/user/{{ log[0] }}">
+{{ log[0] }}
+</a>
+</td>
+
+<td>{{ log[1] }}</td>
+<td>{{ log[2] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+const topSearchLabels = [
+{% for row in top_searches %}
+"{{ row[0] }}",
+{% endfor %}
+]
+
+const topSearchData = [
+{% for row in top_searches %}
+{{ row[1] }},
+{% endfor %}
+]
+
+
+const userLabels = [
+{% for row in user_stats %}
+"{{ row[0] }}",
+{% endfor %}
+]
+
+const userData = [
+{% for row in user_stats %}
+{{ row[1] }},
+{% endfor %}
+]
+
+
+const dayLabels = [
+{% for row in daily_stats %}
+"{{ row[0] }}",
+{% endfor %}
+]
+
+const dayData = [
+{% for row in daily_stats %}
+{{ row[1] }},
+{% endfor %}
+]
+
+
+
+// TOP SEARCHES CHART
+new Chart(
+document.getElementById('searchChart'),
+{
+type:'bar',
+data:{
+labels:topSearchLabels,
+datasets:[{
+label:'Searches',
+data:topSearchData
+}]
+}
+}
+)
+
+
+// USER SEARCHES CHART
+new Chart(
+document.getElementById('userChart'),
+{
+type:'bar',
+data:{
+labels:userLabels,
+datasets:[{
+label:'Searches',
+data:userData
+}]
+}
+}
+)
+
+
+// DAILY SEARCHES CHART
+new Chart(
+document.getElementById('dayChart'),
+{
+type:'line',
+data:{
+labels:dayLabels,
+datasets:[{
+label:'Searches per Day',
+data:dayData
+}]
+}
+}
+)
+
+</script>
+
+</body>
+</html>

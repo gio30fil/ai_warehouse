@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Λίστα Αποθέματος - Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .title-area h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            background: linear-gradient(to right, #818cf8, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .title-area p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-3px);
+        }
+
+        .search-box {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 0.75rem;
+            font-family: inherit;
+            width: 350px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+            width: 400px;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .data-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.9);
+            position: sticky;
+            top: 0;
+            padding: 1.2rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            z-index: 10;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9375rem;
+            color: var(--text-main);
+            transition: background-color 0.2s;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-code {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .badge-stock-high {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .badge-stock-low {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.1);
+        }
+
+        .badge-cat {
+            background: rgba(99, 102, 241, 0.15);
+            color: #c7d2fe;
+            font-size: 0.7rem;
+        }
+
+        .stock-value {
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="title-area">
+                <h1>Λίστα Αποθέματος</h1>
+                <p>Συνολικά Καταγεγραμμένα Προϊόντα στο Σύστημα: {{ products|length }}</p>
+            </div>
+            <div class="actions">
+                <input type="text" id="inventorySearch" class="search-box"
+                    placeholder="Αναζήτηση με κωδικό ή περιγραφή...">
+                {% if session.role == 'admin' %}
+                <a href="/admin" class="btn-back">Επιστροφή στο Admin</a>
+                {% else %}
+                <a href="/" class="btn-back">Επιστροφή στην Αρχική</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <div class="data-section">
+            <div class="table-container">
+                <table id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Κωδικός SoftOne</th>
+                            <th>Κωδικός Εργοστασίου</th>
+                            <th>Περιγραφή</th>
+                            <th>Κατηγορία</th>
+                            <th style="text-align: right;">Απόθεμα</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if products %}
+                        {% for p in products %}
+                        <tr>
+                            <td><span class="badge badge-code">{{ p.kodikos }}</span></td>
+                            <td>{{ p.factory_code }}</td>
+                            <td style="max-width: 400px; font-weight: 500;">{{ p.description }}</td>
+                            <td>
+                                <span class="badge badge-cat">{{ p.category }}</span>
+                                {% if p.subcategory and p.subcategory != 'Unknown' %}
+                                <br><span style="font-size: 0.65rem; color: var(--text-dim);">{{ p.subcategory }}</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: right;">
+                                {% set s = p.live_total|float %}
+                                <div class="stock-container">
+                                    <span class="stock-value {{ 'badge-stock-high' if s > 0 else 'badge-stock-low' }}"
+                                        style="padding: 4px 10px; border-radius: 6px; display: inline-block; margin-bottom: 5px;">
+                                        {{ p.live_total }}
+                                    </span>
+
+                                    {% if p.details|length > 1 %}
+                                    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 5px;">
+                                        {% for detail in p.details %}
+                                        <div style="margin-bottom: 2px;">
+                                            <strong>{{ detail.wh }}:</strong> {{ detail.q }}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% elif p.details|length == 1 %}
+                                    <div
+                                        style="font-size: 0.7rem; color: var(--accent-blue); font-style: italic; margin-top: 5px;">
+                                        To απόθεμα είναι μοναδικό. <br> ({{ p.details[0].wh }})
+                                    </div>
+                                    {% else %}
+                                    {% if s > 0 %}
+                                    <div
+                                        style="font-size: 0.7rem; color: var(--accent-blue); font-style: italic; margin-top: 5px;">
+                                        Μοναδικό απόθεμα.
+                                    </div>
+                                    {% else %}
+                                    <div
+                                        style="font-size: 0.7rem; color: var(--text-dim); font-style: italic; margin-top: 5px;">
+                                        Μηδενικό απόθεμα.
+                                    </div>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 3rem;">Δεν
+                                βρέθηκαν δεδομένα αποθέματος</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('inventorySearch').addEventListener('input', function (e) {
+            const term = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#inventoryTable tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
+
+        // Auto-search from URL parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchTerm = urlParams.get('search');
+            if (searchTerm) {
+                const searchBox = document.getElementById('inventorySearch');
+                searchBox.value = searchTerm;
+                searchBox.dispatchEvent(new Event('input'));
+
+                // Optional: scroll to the first match
+                const firstMatch = document.querySelector('#inventoryTable tbody tr:not([style*="display: none"])');
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstMatch.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
+                    setTimeout(() => { firstMatch.style.transition = 'background-color 2s'; firstMatch.style.backgroundColor = ''; }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

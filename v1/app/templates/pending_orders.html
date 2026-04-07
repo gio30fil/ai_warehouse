@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Εκκρεμείς Παραγγελίες Πωλήσεων - SoftOne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-orange: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .title-area h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            background: linear-gradient(to right, #818cf8, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .data-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease-out;
+            text-align: center;
+        }
+
+        .order-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .order-info h3 {
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .order-info p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .no-data {
+            padding: 4rem 2rem;
+            color: var(--text-dim);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-close {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background 0.3s;
+        }
+
+        .btn-close:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title-area">
+                <h1>Εκκρεμείς Παραγγελίες Πωλήσεων</h1>
+            </div>
+        </header>
+
+        <div class="data-section">
+            {% if orders %}
+                <div style="text-align: left; margin-bottom: 2rem;">
+                    <p style="color: var(--text-dim);">Βρέθηκαν {{ orders|length }} εκκρεμείς παραγγελίες.</p>
+                </div>
+                {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-info">
+                            <h3>Παραγγελία: {{ order.fincode or ('#' + (order.trndate or 'Unknown')) }}</h3>
+                            <p>Πελάτης: {{ order.customer_name or 'N/A' }}</p>
+                            <p>Ημερομηνία: {{ order.trndate or 'N/A' }}</p>
+                            <p>Συνολική Αξία: {{ order.sum_amount or '0.00' }} €</p>
+                        </div>
+                        <div class="order-status">
+                            <span class="badge badge-pending">ΣΕ ΕΚΚΡΕΜΟΤΗΤΑ</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-data">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+                    <h2>Δεν βρέθηκαν εκκρεμείς παραγγελίες</h2>
+                    <p style="margin-top: 1rem;">Αυτή τη στιγμή δεν υπάρχουν δεδομένα για εκκρεμείς παραγγελίες πωλήσεων από το SoftOne.</p>
+                </div>
+            {% endif %}
+
+            <button class="btn-close" onclick="window.close()">Κλείσιμο Παραθύρου</button>
+        </div>
+    </div>
+</body>
+</html>
